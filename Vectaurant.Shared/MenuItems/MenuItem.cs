@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Extensions.VectorData;
 
-namespace Vectaurant.Shared
+namespace Vectaurant.Shared.MenuItems
 {
     public class MenuItem
     {
@@ -25,5 +25,15 @@ namespace Vectaurant.Shared
 
         [VectorStoreVector(3072)]
         public ReadOnlyMemory<float> TextEmbedding { get; set; }
+
+        public bool TryReserve(int quantity)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
+
+            if (AvailableCount < quantity) return false;
+
+            AvailableCount -= quantity;
+            return true;
+        }
     }
 }
