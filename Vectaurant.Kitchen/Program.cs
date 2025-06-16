@@ -4,8 +4,8 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
-using Vectaurant.Kitchen;
 using Vectaurant.Shared;
+using Vectaurant.Shared.MenuItems;
 
 
 var openAiConfig = ConfigurationLoader.GetSection<OpenAIOptions>(nameof(OpenAIOptions));
@@ -19,15 +19,19 @@ var qdrantEndpoint = qdrandConfig.Endpoint;
 var qdrantCollectionName = qdrandConfig.CollectionName;
 
 var builder = Kernel.CreateBuilder();
+
+builder.Services.AddQdrantVectorStore(qdrantEndpoint, https: false);
+
 var openAIClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
 builder.AddAzureOpenAIChatCompletion(chatModelId, openAIClient);
 var embeddingClient = openAIClient.GetEmbeddingClient(embeddingModelId).AsIEmbeddingGenerator();
-builder.Services.AddQdrantVectorStore(qdrantEndpoint, https: false);
+
+builder.Services.AddSingleton<MenuItemRepository>();
 
 var kernel = builder.Build();
 var vectorStore = kernel.GetRequiredService<QdrantVectorStore>();
-
-List<MenuItem> menuItems = MenuProvider.GetMenuItems();
+var menuRepo = kernel.GetRequiredService<MenuItemRepository>();
+var menuItems = menuRepo.GetMenuItems();
 
 Console.WriteLine("Starting to index Menu into Qdrant...");
 

@@ -1,13 +1,12 @@
-﻿using Vectaurant.Shared;
+﻿namespace Vectaurant.Shared.MenuItems;
 
-namespace Vectaurant.Kitchen;
-
-public static class MenuProvider
+public class MenuItemRepository
 {
-    //This method can be replaced with any implementation that reads data from a database or another data source.
-    public static List<MenuItem> GetMenuItems()
+    private readonly List<MenuItem> _menuItems;
+
+    public MenuItemRepository()
     {
-        return
+        _menuItems =
         [
             new() { Id = 1, Name = "Bruschetta", Description = "Grilled bread topped with garlic, tomatoes, olive oil, and basil.", Category = "Appetizer", AvailableCount = 10, Price = 6.5 },
             new() { Id = 2, Name = "Caesar Salad", Description = "Fresh romaine lettuce with Caesar dressing, croutons, and parmesan.", Category = "Appetizer", AvailableCount = 8, Price = 7.0 },
@@ -24,4 +23,14 @@ public static class MenuProvider
             new() { Id = 13, Name = "Grilled Chicken Sandwich", Description = "Juicy grilled chicken breast with lettuce, tomato, and aioli on a brioche bun.", Category = "Main Course", AvailableCount = 6, Price = 12.5 }
         ];
     }
+    public IReadOnlyList<MenuItem> GetMenuItems()
+    {
+        return _menuItems.AsReadOnly();
+    }
+
+    public MenuItem? GetMenuItemById(ulong id)
+    {
+        return _menuItems.FirstOrDefault(item => item.Id == id);
+    }
+
 }
