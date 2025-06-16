@@ -13,21 +13,41 @@ var chatModelId = openAiConfig.ChatBot.ModelId;
 var endpoint = openAiConfig.Endpoint;
 var apiKey = openAiConfig.ApiKey;
 var embeddingModelId = openAiConfig.EmbeddingModel.ModelId;
+
 var qdrandConfig = ConfigurationLoader.GetSection<QdrandOptions>(nameof(QdrandOptions));
 var qdrantEndpoint = qdrandConfig.Endpoint;
+var qdrantCollectionName = qdrandConfig.CollectionName;
 
 var builder = Kernel.CreateBuilder();
-//builder.Services.AddAzureOpenAIEmbeddingGeneration(embeddingModelId, azureEndpoint, azureApiKey);
 var openAIClient = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
 builder.AddAzureOpenAIChatCompletion(chatModelId, openAIClient);
 var embeddingClient = openAIClient.GetEmbeddingClient(embeddingModelId).AsIEmbeddingGenerator();
-// text-embedding-3-large has 3072 dimensions
 builder.Services.AddQdrantVectorStore(qdrantEndpoint, https: false);
 
 var kernel = builder.Build();
 var vectorStore = kernel.GetRequiredService<QdrantVectorStore>();
 
-// 3. Define the data to be indexed
 List<MenuItem> menuItems = MenuProvider.GetMenuItems();
 
+Console.WriteLine("Starting to index Menu into Qdrant...");
+
+var collection = vectorStore.GetCollection<ulong, MenuItem>(qdrantCollectionName);
+await collection.EnsureCollectionExistsAsync();
+
+var textsToEmbed = menuItems.Select(item =>
+    $"Try our {item.Name}, a {item.Category.ToLower()} that {item.Description.ToLower()}. It's available for just ${item.Price}."
+).ToList();
+
+var embeddings = await embeddingClient.GenerateAsync(textsToEmbed);
+
+for (int i = 0; i < menuItems.Count; i++)
+{
+    menuItems[i].TextEmbedding = embeddings[i].Vector;
+    await collection.UpsertAsync(menuItems[i]);
+    Console.WriteLine($"  - Indexed '{menuItems[i].Name}'");
+}
+
+Console.WriteLine("\n - Data indexing complete!");
+Console.WriteLine("Press any key to exit!");
+Console.ReadKey();
 

@@ -21,4 +21,5 @@ public class EmbeddingModelConfig
 public class QdrandOptions
 {
     public string Endpoint { get; set; }
+    public string CollectionName { get; set; }
 }
