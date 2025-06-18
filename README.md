@@ -65,7 +65,6 @@ Open the appsettings.json file inside the Vectaurant.Shared project and add your
 ```
 
 ### 4. Run the Projects
-In two separate terminals, run the following:
 
 **First, run Qdrant on your local machine:**
 
