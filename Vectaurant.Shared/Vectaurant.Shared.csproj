@@ -13,4 +13,10 @@
     <PackageReference Include="Microsoft.Extensions.VectorData.Abstractions" Version="9.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
