@@ -1,6 +1,6 @@
 ﻿# 🍽️ Vectaurant — Your Smart Restaurant Assistant
 
-**Vectaurant** is an AI-powered restaurant assistant designed to help customers interact with menus and restaurant services more naturally and efficiently. It leverages **OpenAI** for natural language understanding, **Semantic Kernel** for orchestrating plugins and agent behavior, **Qdrant** for vector-based search.
+**Vectaurant** is an AI-powered restaurant assistant designed to help customers interact with menus and restaurant services more naturally and efficiently. It leverages **OpenAI** for natural language understanding, **Semantic Kernel** for orchestrating plugins and agent behavior, **Qdrant** for vector-based search, and follows the RAG (Retrieval-Augmented Generation) pattern to enhance responses with relevant, retrieved information.
 
 ---
 
